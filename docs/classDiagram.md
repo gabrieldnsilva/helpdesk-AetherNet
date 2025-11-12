@@ -25,6 +25,7 @@ class Chamado {
   Status status
   String titulo
   String observacoes
+  +fechar()
 }
 
 Chamado --> Cliente : cliente

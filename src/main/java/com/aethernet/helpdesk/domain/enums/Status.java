@@ -2,7 +2,7 @@ package com.aethernet.helpdesk.domain.enums;
 
 public enum Status {
 
-    ABERTO(0, "ABERTO"), ANDAMENTO(1, "EM ANDAMENTO"), ENCERRADO(2, "ENCERRADO");
+    ABERTO(0, "ABERTO"), EM_ANDAMENTO(1, "EM ANDAMENTO"), PAUSADO(2, "PAUSADO"), ENCERRADO(3, "ENCERRADO"), CANCELADO(4, "CANCELADO");
 
     private Integer codigo;
     private String descricao;
