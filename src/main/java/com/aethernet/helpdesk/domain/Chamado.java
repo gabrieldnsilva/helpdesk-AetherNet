@@ -29,10 +29,12 @@ public class Chamado {
     @Column(length = 2000)
     private String observacoes;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
     @ManyToOne
+    @JoinColumn(name = "tecnico_id")
     private Tecnico tecnico;
 
     public void fechar() {
