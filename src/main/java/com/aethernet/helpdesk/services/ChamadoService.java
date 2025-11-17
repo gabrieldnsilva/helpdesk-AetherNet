@@ -128,6 +128,41 @@ public class ChamadoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public ChamadoResponseDTO fechar(UUID id) {
+        Chamado chamado = chamadoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Chamado não encontrado: " +  id));
+
+        validarTransicaoStatus(chamado.getStatus(), Status.ENCERRADO);
+        chamado.fechar();
+
+        Chamado chamadoAtualizado  = chamadoRepository.save(chamado);
+        return toResponseDTO(chamadoAtualizado);
+    }
+
+    public ChamadoResponseDTO atribuirTecnico(UUID chamadoId, UUID tecnicoId) {
+        Chamado chamado = chamadoRepository.findById(chamadoId)
+                .orElseThrow(() -> new EntityNotFoundException("Chamado não encontrado: " + chamadoId));
+
+        Tecnico tecnico = tecnicoRepository.findById(tecnicoId)
+                .orElseThrow(() -> new EntityNotFoundException("Técnico não encontrado: " + tecnicoId));
+
+        if (chamado.getStatus() == Status.ENCERRADO) {
+            throw new DomainRuleException("Não é possível atribuir um técnico a um chamado encerrado");
+        }
+
+        chamado.setTecnico(tecnico);
+
+        // Se o chamado estava ABERTO, muda para EM_ANDAMENTO após atribuir técnico
+        if (chamado.getStatus() == Status.ABERTO) {
+            chamado.setStatus(Status.EM_ANDAMENTO);
+        }
+
+        Chamado chamadoAtualizado = chamadoRepository.save(chamado);
+        return toResponseDTO(chamadoAtualizado);
+    }
+
+
     private void validarTransicaoStatus(Status atual, Status novo) {
         if (atual == Status.ENCERRADO) {
             throw new DomainRuleException("Não é possível alterar um chamado encerrado");
