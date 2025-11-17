@@ -4,7 +4,6 @@ import com.aethernet.helpdesk.domain.enums.Perfil;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
