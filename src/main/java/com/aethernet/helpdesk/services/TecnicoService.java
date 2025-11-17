@@ -65,7 +65,7 @@ public class TecnicoService {
         return tecnicoRepository.findAll()
                 .stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -99,18 +99,6 @@ public class TecnicoService {
             throw new EntityNotFoundException("Técnico", id);
         }
         tecnicoRepository.deleteById(id);
-    }
-
-    private void validarCpfUnico(String cpf) {
-        tecnicoRepository.findByCpf(cpf).ifPresent(t -> {
-            throw new DuplicateEntityException("CPF", cpf);
-        });
-    }
-
-    private void validarEmailUnico(String email) {
-        tecnicoRepository.findByEmail(email).ifPresent(t -> {
-            throw new DuplicateEntityException("Email", email);
-        });
     }
 
     private TecnicoResponseDTO toResponseDTO(Tecnico tecnico) {
