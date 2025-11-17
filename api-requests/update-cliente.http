@@ -1,0 +1,8 @@
+### Atualizar cliente existente
+PUT http://localhost:8080/api/clientes/SEU-UUID-AQUI
+Content-Type: application/json
+
+{
+  "nome": "Pedro Oliveira Atualizado",
+  "email": "pedro.novo@email.com"
+}

@@ -1,0 +1,10 @@
+### Criar novo cliente
+POST http://localhost:8080/api/clientes
+Content-Type: application/json
+
+{
+  "nome": "Pedro Oliveira",
+  "cpf": "11111111111",
+  "email": "pedro@email.com",
+  "senha": "senha789"
+}

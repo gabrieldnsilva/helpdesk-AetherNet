@@ -1,0 +1,7 @@
+### Buscar cliente por ID
+GET http://localhost:8080/api/clientes/
+
+###
+
+### Listar todos os clientes
+GET http://localhost:8080/api/clientes
