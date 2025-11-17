@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -30,10 +31,10 @@ public class ClienteService {
 
         // Validar Unicidade de CPF e Email
         if (clienteRepository.existsByCpf(dto.cpf())) {
-            throw new DuplicateEntityException("CPF já cadastrado no sistema");
+            throw new DuplicateEntityException("CPF já cadastrado");
         }
         if (clienteRepository.existsByEmail(dto.email())) {
-            throw new DuplicateEntityException("E-mail já cadastrado no sistema");
+            throw new DuplicateEntityException("E-mail já cadastrado");
         }
 
         Cliente cliente = new Cliente();
@@ -51,6 +52,21 @@ public class ClienteService {
 
         cliente = clienteRepository.save(cliente);
         return toResponseDTO(cliente);
+    }
+
+    @Transactional(readOnly = true)
+    public ClienteResponseDTO buscarPorId(UUID id) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente", id));
+        return toResponseDTO(cliente);
+   }
+
+    @Transactional(readOnly = true)
+    public List<ClienteResponseDTO> listarTodos() {
+        return clienteRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
     @Transactional
@@ -84,18 +100,6 @@ public class ClienteService {
             throw new EntityNotFoundException("Cliente", id);
         }
         clienteRepository.deleteById(id);
-    }
-
-    private void validarCpfUnico(String cpf) {
-        clienteRepository.findByCpf(cpf).ifPresent(c -> {
-            throw new DuplicateEntityException("CPF", cpf);
-        });
-    }
-
-    private void validarEmailUnico(String email) {
-        clienteRepository.findByEmail(email).ifPresent(c -> {
-            throw new DuplicateEntityException("Email", email);
-        });
     }
 
     private ClienteResponseDTO toResponseDTO(Cliente cliente) {

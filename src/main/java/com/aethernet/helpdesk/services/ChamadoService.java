@@ -140,6 +140,7 @@ public class ChamadoService {
         return toResponseDTO(chamadoAtualizado);
     }
 
+    @Transactional
     public ChamadoResponseDTO atribuirTecnico(UUID chamadoId, UUID tecnicoId) {
         Chamado chamado = chamadoRepository.findById(chamadoId)
                 .orElseThrow(() -> new EntityNotFoundException("Chamado não encontrado: " + chamadoId));
