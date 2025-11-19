@@ -2,6 +2,7 @@ package com.aethernet.helpdesk.exceptions;
 
 import com.aethernet.helpdesk.domain.dto.response.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -98,5 +99,27 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDataIntegrity(
+            org.springframework.dao.DataIntegrityViolationException ex,
+            HttpServletRequest request) {
+
+        String message = "Violação de integridade dos dados";
+        if (ex.getMessage().contains("CPF")) {
+            message = "CPF já cadastrado no sistema";
+        } else if (ex.getMessage().contains("EMAIL")) {
+            message = "E-mail já cadastrado no sistema";
+        }
+
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Conflict",
+                message,
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 }
