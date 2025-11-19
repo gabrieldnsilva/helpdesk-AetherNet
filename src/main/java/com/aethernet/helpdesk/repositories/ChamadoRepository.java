@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface ChamadoRepository extends JpaRepository<Chamado, UUID> {
     List<Chamado> findByStatus(com.aethernet.helpdesk.domain.enums.Status status);
     List<Chamado> findByPrioridade(com.aethernet.helpdesk.domain.enums.Prioridade prioridade);
+    List<Chamado> findByClienteId(UUID clienteId);
+    List<Chamado> findByTecnicoId(UUID tecnicoId);
 }
