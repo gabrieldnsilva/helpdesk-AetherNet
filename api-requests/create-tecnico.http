@@ -1,0 +1,11 @@
+### Criar Técnico
+POST http://localhost:8080/api/tecnicos
+Content-Type: application/json
+
+{
+  "nome": "João da Silva",
+  "cpf": "12345678900",
+  "email": "joao.silva@example.com",
+  "senha": "senha123",
+  "perfis": ["TECNICO"]
+}

@@ -1,0 +1,7 @@
+### Buscar Tecnico por ID
+# Utilizando o ID do tecnico desejado (Mockado de DataLoader)
+@id = 8af531a8-b047-4fcf-abf7-52d86f5b7dce
+GET http://localhost:8080/api/tecnicos/{{id}}
+
+### Listar todos os tecnicos
+GET http://localhost:8080/api/tecnicos

@@ -1,0 +1,11 @@
+### Atualizar Técnico
+@id = 0c0aa13e-7935-40d2-a44a-cb86b2118b36
+PUT http://localhost:8080/api/tecnicos/{{id}}
+Content-Type: application/json
+
+{
+  "nome": "Nome Alterado",
+  "cpf": "12345678900",
+  "email": "joao.alterado@example.com",
+  "senha": "senhaNova999"
+}
