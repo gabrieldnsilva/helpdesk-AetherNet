@@ -12,7 +12,7 @@ import java.util.*;
 public abstract class Pessoa {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String nome;

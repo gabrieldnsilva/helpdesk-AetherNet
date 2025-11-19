@@ -37,12 +37,10 @@ public class TecnicoService {
         }
 
         Tecnico tecnico = new Tecnico();
-        tecnico.setId(UUID.randomUUID());
         tecnico.setNome(dto.nome());
         tecnico.setCpf(dto.cpf());
         tecnico.setEmail(dto.email());
         tecnico.setSenha(dto.senha()); // TODO: criptografar com BCrypt
-        tecnico.setDataCriacao(LocalDateTime.now());
 
         Set<Perfil> perfis = dto.perfis() != null && !dto.perfis().isEmpty()
                 ? dto.perfis()
@@ -101,6 +99,11 @@ public class TecnicoService {
 
         if (dto.senha() != null && !dto.senha().isBlank()) {
             tecnico.setSenha(dto.senha()); // TODO: Criptografar Senha
+        }
+
+        if (dto.perfis() != null && !dto.perfis().isEmpty()) {
+            tecnico.getPerfis().clear();
+            dto.perfis().forEach(tecnico::addPerfil);
         }
 
         tecnico = tecnicoRepository.save(tecnico);
