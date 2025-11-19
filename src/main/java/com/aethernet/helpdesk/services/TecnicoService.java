@@ -61,6 +61,20 @@ public class TecnicoService {
     }
 
     @Transactional(readOnly = true)
+    public TecnicoResponseDTO buscarPorCpf(String cpf) {
+        Tecnico tecnico = tecnicoRepository.findByCpf(cpf)
+                .orElseThrow(() -> new EntityNotFoundException("Técnico", cpf));
+        return toResponseDTO(tecnico);
+    }
+
+    @Transactional(readOnly = true)
+    public TecnicoResponseDTO buscarPorEmail(String email) {
+        Tecnico tecnico = tecnicoRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Técnico", email));
+        return toResponseDTO(tecnico);
+    }
+
+    @Transactional(readOnly = true)
     public List<TecnicoResponseDTO> listarTodos() {
         return tecnicoRepository.findAll()
                 .stream()
