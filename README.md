@@ -36,4 +36,20 @@ Para executar este projeto, você precisará ter instalado:
    ```
    cd helpdesk-AetherNet
    ```
-2. 
+2. Executando a Aplicação
+Este projeto utiliza o H2 Database em memória para desenvolvimento, o que significa que ele não requer configuração externa de banco de dados e os dados serão perdidos ao encerrar a aplicação.
+
+A aplicação será iniciada na porta padrão: ```http://localhost:8080```
+
+
+
+## 📦 Estrutura de Código
+A arquitetura do projeto segue o padrão em camadas, focando na separação de responsabilidades:
+
+* __controller:__ Responsável por mapear os endpoints da API ```(@RestController)``` e processar requisições HTTP.
+
+* __service:__ Contém a lógica de negócio (ex: validações, regras de atualização de status).
+
+* __repository:__ Interfaces que estendem ```JpaRepository```, responsáveis pela comunicação direta com o banco de dados via Spring Data JPA.
+
+* __domain:__ Contém as entidades de persistência ```(Chamado.java)```, DTOs e Enums ```(Status, Prioridade)```.
