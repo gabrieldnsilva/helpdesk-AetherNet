@@ -134,24 +134,26 @@ public class ChamadoService {
 
     @Transactional
     public ChamadoResponseDTO atribuirTecnico(UUID chamadoId, UUID tecnicoId) {
-        Chamado chamado = buscarChamado(chamadoId);
+        Chamado chamado = chamadoRepository.findById(chamadoId)
+                .orElseThrow(() -> new EntityNotFoundException("Chamado não encontrado: " + chamadoId));
+
         Tecnico tecnico = tecnicoRepository.findById(tecnicoId)
-                .orElseThrow(() -> new EntityNotFoundException("Técnico", tecnicoId));
+                .orElseThrow(() -> new EntityNotFoundException("Técnico não encontrado: " + tecnicoId));
 
         if (chamado.getStatus() == Status.ENCERRADO) {
-            throw new DomainRuleException("Não é possível atribuir técnico a chamado encerrado");
+            throw new DomainRuleException("Não é possível atribuir um técnico a um chamado encerrado");
         }
 
         chamado.setTecnico(tecnico);
 
+        // Se o chamado estava ABERTO, muda para EM_ANDAMENTO após atribuir técnico
         if (chamado.getStatus() == Status.ABERTO) {
             chamado.setStatus(Status.EM_ANDAMENTO);
-            // TODO: log.info("Chamado {} iniciado automaticamente ao atribuir técnico {}", chamadoId, tecnicoId);
         }
 
-        return toResponseDTO(chamadoRepository.save(chamado));
+        Chamado chamadoAtualizado = chamadoRepository.save(chamado);
+        return toResponseDTO(chamadoAtualizado);
     }
-
 
     @Transactional
     public ChamadoResponseDTO fechar(UUID id) {
@@ -166,25 +168,15 @@ public class ChamadoService {
     }
 
     private void validarTransicaoStatus(Status atual, Status novo) {
-        if (atual == Status.ENCERRADO) {
-            throw new DomainRuleException("Não é possível alterar um chamado encerrado");
-        }
 
         if (atual == Status.ABERTO && novo == Status.ENCERRADO) {
             throw new DomainRuleException("Chamado deve estar em andamento antes de ser encerrado");
         }
 
-        // Regra adicional: PAUSADO só pode voltar para EM_ANDAMENTO
-        if (atual == Status.PAUSADO && novo != Status.EM_ANDAMENTO) {
-            throw new DomainRuleException("Chamado pausado só pode retornar para em andamento");
-        }
-
-        // Regra: ABERTO só pode ir para EM_ANDAMENTO ou PAUSADO
-        if (atual == Status.ABERTO && novo == Status.PAUSADO) {
-            // Permitir pausar antes de iniciar? Avaliar regra de negócio
+        if (atual == Status.ENCERRADO) {
+            throw new DomainRuleException("Não é possível alterar um chamado encerrado");
         }
     }
-
 
     private ChamadoResponseDTO toResponseDTO(Chamado chamado) {
         return new ChamadoResponseDTO(
