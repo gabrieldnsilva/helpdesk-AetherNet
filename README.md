@@ -58,6 +58,86 @@ Durante o desenvolvimento, o banco de dados H2 fica acessível para inspeção d
 | PUT | /api/chamados/{id}/observacoes | Atualiza as observações do chamado | String |
 
 
+## 🧪 Testando os Endpoints com Postman
+
+A seguir, apresentamos exemplos de como realizar as principais operações na coleção do Postman.
+
+
+### 1. Criar um Chamado (POST /api/chamados)
+Antes de criar um chamado, certifique-se de que a aplicação carregou os dados iniciais (Clientes e Técnicos).
+
+* Método: POST
+
+* URL: ```http://localhost:8080/api/chamados```
+
+* Header: ```Content-Type: application/json```
+
+* __Body (raw, JSON):__
+
+ ```JSON
+  {
+    "prioridade": "ALTA",
+    "titulo": "Problema de login na ferramenta X",
+    "observacoes": "O cliente não consegue acessar o sistema desde ontem à noite.",
+    "clienteId": "UUID_DO_CLIENTE_AQUI", 
+    "tecnicoId": null 
+}
+ ```
+
+__Dica__: Você pode obter um ```UUID``` de cliente ou técnico do H2 Console ```(http://localhost:8080/h2-console)``` inspecionando as tabelas ```CLIENTE``` e ```TECNICO```.
+
+
+### 2. Atribuir Técnico (PUT /api/chamados/{chamadoId}/tecnico/{tecnicoId})
+Este endpoint demonstra uma regra de negócio: a atribuição de um técnico.
+
+* Método: PUT
+
+* URL:  ```http://localhost:8080/api/chamados/{UUID_DO_CHAMADO}/{UUID_DO_TECNICO} ```
+
+* Exemplo:  ```http://localhost:8080/api/chamados/6b68b8e0-2f9b-4e8c-8f2e-0a0b1c2d3e4f/tecnico/a1b2c3d4-e5f6-7890-1234-567890abcdef ```
+
+* __Body: Nenhum__
+
+### 3. Alterar Status (PUT /api/chamados/{id}/status)
+Altera o status do chamado. Isso ativa as regras de negócio de transição e fechamento (se o status for ENCERRADO).
+
+* Método: PUT
+
+* URL: ```http://localhost:8080/api/chamados/{UUID_DO_CHAMADO}/status```
+
+* Header: ```Content-Type: application/json```
+
+* __Body (raw, JSON):__ (Para mudar para EM_ANDAMENTO)
+
+  ```JSON
+   "EM_ANDAMENTO"
+  ```
+
+__Atenção:__ O corpo da requisição é apenas a string do ```Enum```, conforme definido no seu Controller.
+
+
+### 4. Criar um Novo Técnico (POST /api/tecnicos)
+Cria um registro de usuário que pode resolver chamados.
+
+* Método: POST
+
+* URL: ```http://localhost:8080/api/tecnicos```
+
+* Header: ```Content-Type: application/json```
+
+* __Body (raw, JSON)__ - conforme TecnicoRequestDTO:
+
+```JSON
+{
+    "nome": "Novo Técnico API",
+    "cpf": "55544433322",
+    "email": "novo.tecnico@api.com",
+    "senha": "senhadotecnico",
+    "perfis": ["TECNICO"]
+}
+```
+
+
 ## 📦 Estrutura de Código
 A arquitetura do projeto segue o padrão em camadas, focando na separação de responsabilidades:
 
@@ -68,4 +148,5 @@ A arquitetura do projeto segue o padrão em camadas, focando na separação de r
 * __repository:__ Interfaces que estendem ```JpaRepository```, responsáveis pela comunicação direta com o banco de dados via Spring Data JPA.
 
 * __domain:__ Contém as entidades de persistência ```(Chamado.java)```, DTOs e Enums ```(Status, Prioridade)```.
+
 
