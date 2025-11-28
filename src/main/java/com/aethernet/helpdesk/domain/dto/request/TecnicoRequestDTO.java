@@ -7,6 +7,19 @@ import jakarta.validation.constraints.Size;
 
 import java.util.Set;
 
+/**
+ * DTO (Data Transfer Object) de requisição utilizado para receber e validar os dados
+ * necessários para a criação ou atualização de um Técnico.
+ *
+ * <p>Esta classe record inclui restrições de validação do Jakarta Bean Validation
+ * para garantir que os dados de identificação e acesso do Técnico estejam corretos.</p>
+ *
+ * @param nome O nome completo do Técnico. É obrigatório e deve ter entre 3 e 100 caracteres.
+ * @param cpf O Cadastro de Pessoa Física (CPF) do Técnico. É obrigatório e deve ter entre 11 e 14 caracteres.
+ * @param email O endereço de e-mail do Técnico. É obrigatório e deve ser um formato de e-mail válido.
+ * @param senha A senha de acesso do Técnico. É obrigatória e deve ter no mínimo 6 caracteres.
+ * @param perfis Opcional. Conjunto de perfis (roles) do Técnico, sendo o perfil TECNICO o mais comum.
+ */
 public record TecnicoRequestDTO(
         @NotBlank(message = "Nome é obrigatório")
         @Size(min = 3, max = 100, message = "Nome deve ter entre 3 e 100 caracteres")
