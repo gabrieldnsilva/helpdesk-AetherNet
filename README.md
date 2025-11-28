@@ -41,6 +41,21 @@ Este projeto utiliza o H2 Database em memória para desenvolvimento, o que signi
 
 A aplicação será iniciada na porta padrão: ```http://localhost:8080```
 
+3. Acesso ao H2 Console (Opcional)
+Durante o desenvolvimento, o banco de dados H2 fica acessível para inspeção das tabelas e dados:
+   * URL: ```http://localhost:8080/h2-console```
+   * JDBC URL: ```jdbc:h2:mem:helpdeskdb```
+
+## 🌐 Endpoints da API REST
+| Método | Rota | Descrição | DTO |
+|-------|------|-----------|------------|
+| POST | /api/chamados | Criar chamado | ChamadoRequestDTO |
+| GET | /api/chamados | Listar chamado | Nenhum |
+| GET | /api/chamados/{id} | Lê um chamado pelo UUID | Nenhum |
+| GET | /api/chamados/status/{status} | Consulta chamados por Status | Nenhum |
+| PUT | /api/chamados/{chamadoId}/tecnico/{tecnicoId} | Atribui um técnico ao chamado | Nenhum |
+| PUT | /api/chamados/{id}/status | Altera o Status do chamado | Status |
+| PUT | /api/chamados/{id}/observacoes | Atualiza as observações do chamado | String |
 
 
 ## 📦 Estrutura de Código
@@ -53,3 +68,4 @@ A arquitetura do projeto segue o padrão em camadas, focando na separação de r
 * __repository:__ Interfaces que estendem ```JpaRepository```, responsáveis pela comunicação direta com o banco de dados via Spring Data JPA.
 
 * __domain:__ Contém as entidades de persistência ```(Chamado.java)```, DTOs e Enums ```(Status, Prioridade)```.
+
