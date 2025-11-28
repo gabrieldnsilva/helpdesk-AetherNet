@@ -65,9 +65,12 @@ public class ChamadoController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}/fechar")
-    public ResponseEntity<ChamadoResponseDTO> fecharChamado(@PathVariable UUID id) {
-        ChamadoResponseDTO response = chamadoService.fechar(id);
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ChamadoResponseDTO> atualizarStatus(
+            @PathVariable UUID id,
+            @RequestBody Status novoStatus) {
+
+        ChamadoResponseDTO response = chamadoService.alterarStatus(id, novoStatus);
         return ResponseEntity.ok(response);
     }
 
