@@ -7,6 +7,19 @@ import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
 
+/**
+ * DTO (Data Transfer Object) de requisição utilizado para receber e validar os dados
+ * necessários para a abertura de um novo Chamado no sistema.
+ *
+ * <p>Esta classe record inclui as restrições de validação do Jakarta Bean Validation
+ * para garantir a integridade dos dados na entrada.</p>
+ *
+ * @param prioridade O nível de prioridade do chamado (ex: BAIXA, MEDIA, ALTA). É obrigatório.
+ * @param titulo O título do chamado. É obrigatório e deve ter entre 5 e 100 caracteres.
+ * @param observacoes Descrição detalhada do problema ou solicitação. Opcional, mas limitada a 500 caracteres.
+ * @param clienteId O UUID do Cliente que está abrindo o chamado. É obrigatório.
+ * @param tecnicoId O UUID do Técnico que será atribuído inicialmente ao chamado (opcional na abertura).
+ */
 public record ChamadoRequestDTO(
         @NotNull(message = "Prioridade é obrigatória")
         Prioridade prioridade,
