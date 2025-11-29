@@ -1,6 +1,8 @@
 package com.aethernet.helpdesk.repositories;
 
 import com.aethernet.helpdesk.domain.Chamado;
+import com.aethernet.helpdesk.domain.enums.Prioridade;
+import com.aethernet.helpdesk.domain.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +27,7 @@ public interface ChamadoRepository extends JpaRepository<Chamado, UUID> {
      * @param status O {@code Status} pelo qual os chamados serão filtrados.
      * @return Uma lista de {@code Chamado}s que correspondem ao status fornecido.
      */
-    List<Chamado> findByStatus(com.aethernet.helpdesk.domain.enums.Status status);
+    List<Chamado> findByStatus(Status status);
 
     /**
      * Busca e retorna uma lista de todos os Chamados que possuem a {@code Prioridade} especificada.
@@ -33,7 +35,16 @@ public interface ChamadoRepository extends JpaRepository<Chamado, UUID> {
      * @param prioridade A {@code Prioridade} pela qual os chamados serão filtrados.
      * @return Uma lista de {@code Chamado}s que correspondem à prioridade fornecida.
      */
-    List<Chamado> findByPrioridade(com.aethernet.helpdesk.domain.enums.Prioridade prioridade);
+    List<Chamado> findByPrioridade(Prioridade  prioridade);
+
+    /**
+     * Busca e retorna uma lista de todos os Chamados que possuem o {@code Status} e a {@code Prioridade} especificados.
+     *
+     * @param status O {@code Status} pelo qual os chamados serão filtrados.
+     * @param prioridade A {@code Prioridade} pela qual os chamados serão filtrados.
+     * @return Uma lista de {@code Chamado}s que correspondem ao status e prioridade fornecidos.
+     */
+    List<Chamado> findByStatusAndPrioridade(Status status, Prioridade prioridade);
 
     /**
      * Busca e retorna uma lista de todos os Chamados abertos por um Cliente específico.

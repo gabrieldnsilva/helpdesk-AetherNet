@@ -11,7 +11,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,18 +37,7 @@ public class ChamadoController {
         this.chamadoService = chamadoService;
     }
 
-    /**
-     * Cria e armazena um novo Chamado no sistema.
-     *
-     * @param dto O DTO {@code ChamadoRequestDTO} contendo os dados para abertura do chamado.
-     * O objeto é validado automaticamente pelo {@code @Valid}.
-     * @return {@code ResponseEntity} contendo o DTO de resposta do chamado criado e o status HTTP 201 (Created).
-     */
-    @PostMapping
-    public ResponseEntity<ChamadoResponseDTO> abrirChamado(@RequestBody @Valid ChamadoRequestDTO dto) {
-        ChamadoResponseDTO response = chamadoService.abrir(dto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
+     // === ENDPOINTS PÚBLICOS ===
 
     /**
      * Busca um Chamado específico pelo seu identificador único.
@@ -57,8 +48,7 @@ public class ChamadoController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ChamadoResponseDTO> buscarPorId(@PathVariable UUID id) {
-        ChamadoResponseDTO response = chamadoService.buscarPorId(id);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(chamadoService.buscarPorId(id));
     }
 
     /**
@@ -67,51 +57,44 @@ public class ChamadoController {
      * @return Uma lista de {@code ChamadoResponseDTO} representando todos os chamados.
      */
     @GetMapping
-    public List<ChamadoResponseDTO> listarTodos() {
-        return chamadoService.listarTodos();
+    public ResponseEntity<List<ChamadoResponseDTO>> listarChamados(
+            @RequestParam(required = false) Status status,
+            @RequestParam(required = false) Prioridade prioridade
+    ) {
+        return ResponseEntity.ok(chamadoService.listarTodos(status, prioridade));
     }
 
     /**
-     * Lista os Chamados filtrados por um determinado Status.
+     * Cria e armazena um novo Chamado no sistema.
      *
-     * @param status O {@code Status} (ex: ABERTO, EM_ANDAMENTO, FECHADO) pelo qual os chamados serão filtrados.
-     * @return Uma lista de {@code ChamadoResponseDTO} que correspondem ao Status fornecido.
+     * @param dto O DTO {@code ChamadoRequestDTO} contendo os dados para abertura do chamado.
+     * O objeto é validado automaticamente pelo {@code @Valid}.
+     * @return {@code ResponseEntity} contendo o DTO de resposta do chamado criado e o status HTTP 201 (Created).
      */
-    @GetMapping("/status/{status}")
-    public List<ChamadoResponseDTO> listarPorStatus(@PathVariable Status status) {
-        return chamadoService.listarPorStatus(status);
+    @PostMapping
+    public ResponseEntity<ChamadoResponseDTO> criar(@RequestBody @Valid ChamadoRequestDTO dto) {
+        ChamadoResponseDTO response = chamadoService.abrir(dto);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.id())
+                .toUri();
+        return ResponseEntity.created(location).body(response);
     }
 
     /**
-     * Atribui um Técnico a um Chamado específico.
-     *
-     * @param chamadoId O UUID do Chamado que será atribuído.
-     * @param tecnicoId O UUID do Técnico que será responsável pelo chamado.
-     * @return {@code ResponseEntity} contendo o Chamado atualizado com o Técnico atribuído e o status HTTP 200 (OK).
-     */
-    @PutMapping("/{chamadoId}/tecnico/{tecnicoId}")
-    public ResponseEntity<ChamadoResponseDTO> atribuirTecnico(
-            @PathVariable UUID chamadoId,
-            @PathVariable UUID tecnicoId) {
-
-        ChamadoResponseDTO response = chamadoService.atribuirTecnico(chamadoId, tecnicoId);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * Atualiza o campo de observações de um Chamado específico.
+     * Atualiza os dados de um Chamado existente.
      *
      * @param id O UUID do Chamado a ser atualizado.
-     * @param novasObservacoes A nova string de observações para o chamado.
-     * @return {@code ResponseEntity} contendo o Chamado atualizado e o status HTTP 200 (OK).
+     * @param dto O DTO {@code AtualizarChamadoRequestDTO} contendo os dados atualizados do chamado.
+     * O objeto é validado automaticamente pelo {@code @Valid}.
+     * @return {@code ResponseEntity} contendo o DTO de resposta do chamado atualizado e o status HTTP 200 (OK).
+     * @throws EntityNotFoundException Se o Chamado com o ID fornecido não for encontrado.
      */
-    @PutMapping("/{id}/observacoes")
-    public ResponseEntity<ChamadoResponseDTO> atualizarObservacoes(
-            @PathVariable UUID id,
-            @RequestBody String novasObservacoes) {
-
-        ChamadoResponseDTO response = chamadoService.atualizarObservacoes(id, novasObservacoes);
-        return ResponseEntity.ok(response);
+    @PutMapping("/{id}")
+    public ResponseEntity<ChamadoResponseDTO> atualizar(@PathVariable UUID id,
+                                                        @Valid @RequestBody ChamadoRequestDTO dto) {
+        return ResponseEntity.ok(chamadoService.atualizar(id, dto));
     }
 
     /**
@@ -121,13 +104,23 @@ public class ChamadoController {
      * @param novoStatus O novo {@code Status} a ser aplicado ao chamado.
      * @return {@code ResponseEntity} contendo o Chamado com o status atualizado e o status HTTP 200 (OK).
      */
-    @PutMapping("/{id}/status")
+    @PatchMapping("/{id}/status")
     public ResponseEntity<ChamadoResponseDTO> atualizarStatus(
             @PathVariable UUID id,
             @RequestBody Status novoStatus) {
 
         ChamadoResponseDTO response = chamadoService.alterarStatus(id, novoStatus);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Altera o Status de um Chamado para FECHADO.
+     * @param id O UUID do Chamado a ser fechado.
+     * @return {@code ResponseEntity} contendo o Chamado com o status atualizado e o status HTTP 200 (OK).
+     */
+    @PatchMapping("/{id}/fechar")
+    public ResponseEntity<ChamadoResponseDTO> fechar(@PathVariable UUID id) {
+        return ResponseEntity.ok(chamadoService.fechar(id));
     }
 
 }

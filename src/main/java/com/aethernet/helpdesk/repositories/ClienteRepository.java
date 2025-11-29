@@ -18,21 +18,9 @@ import java.util.UUID;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
 
-    /**
-     * Busca um Cliente pelo seu número de CPF.
-     *
-     * @param cpf O número de CPF do Cliente.
-     * @return Um {@code Optional} contendo o Cliente, se encontrado.
-     */
-    Optional<Cliente> findByCpf(String cpf);
+    Optional<Cliente> findClienteByCpf(String cpf);
 
-    /**
-     * Busca um Cliente pelo seu endereço de Email.
-     *
-     * @param email O endereço de Email do Cliente.
-     * @return Um {@code Optional} contendo o Cliente, se encontrado.
-     */
-    Optional<Cliente> findByEmail(String email);
+    Optional<Cliente> findClienteByEmail(String email);
 
     /**
      * Verifica a existência de um Cliente no banco de dados com o CPF fornecido.

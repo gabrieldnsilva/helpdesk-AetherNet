@@ -3,6 +3,7 @@ package com.aethernet.helpdesk.services;
 import com.aethernet.helpdesk.domain.Chamado;
 import com.aethernet.helpdesk.domain.Cliente;
 import com.aethernet.helpdesk.domain.Tecnico;
+import com.aethernet.helpdesk.domain.dto.request.AtualizarChamadoRequestDTO;
 import com.aethernet.helpdesk.domain.dto.request.ChamadoRequestDTO;
 import com.aethernet.helpdesk.domain.dto.response.ChamadoResponseDTO;
 import com.aethernet.helpdesk.domain.enums.Prioridade;
@@ -57,6 +58,11 @@ public class ChamadoService {
         chamado.setCliente(cliente);
         chamado.setTecnico(tecnico);
 
+        // Transição para EM_ANDAMENTO se técnico for atribuído na abertura
+        if (tecnico != null && chamado.getStatus() == Status.ABERTO) {
+            chamado.setStatus(Status.EM_ANDAMENTO);
+        }
+
         chamado = chamadoRepository.save(chamado);
         return toResponseDTO(chamado);
     }
@@ -69,27 +75,46 @@ public class ChamadoService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChamadoResponseDTO> listarTodos() {
-        return chamadoRepository.findAll()
-                .stream()
-                .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+    public List<ChamadoResponseDTO> listarTodos(Status status, Prioridade prioridade) {
+        List<Chamado> chamados;
+        if (status != null && prioridade != null) {
+            chamados = chamadoRepository.findByStatusAndPrioridade(status, prioridade);
+        } else if (status != null) {
+            chamados = chamadoRepository.findByStatus(status);
+        } else if (prioridade != null) {
+            chamados = chamadoRepository.findByPrioridade(prioridade);
+        } else {
+            chamados = chamadoRepository.findAll();
+        }
+        return chamados.stream().map(this::toResponseDTO).toList();
     }
 
-    @Transactional(readOnly = true)
-    public List<ChamadoResponseDTO> listarPorStatus(Status status) {
-        return chamadoRepository.findByStatus(status)
-                .stream()
-                .map(this::toResponseDTO)
-                .collect(Collectors.toList());
-    }
+    @Transactional
+    public ChamadoResponseDTO atualizar(UUID id, ChamadoRequestDTO dto) {
+        Chamado chamado = buscarChamado(id);
+        validarNaoEncerrado(chamado);
 
-    @Transactional(readOnly = true)
-    public List<ChamadoResponseDTO> listarPorPrioridade(Prioridade prioridade) {
-        return chamadoRepository.findByPrioridade(prioridade)
-                .stream()
-                .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+        Cliente cliente = clienteRepository.findById(dto.clienteId())
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+        Tecnico tecnico = null;
+        if (dto.tecnicoId() != null) {
+            tecnico = tecnicoRepository.findById(dto.tecnicoId())
+                    .orElseThrow(() -> new EntityNotFoundException("Técnico não encontrado"));
+        }
+
+        chamado.setTitulo(dto.titulo());
+        chamado.setObservacoes(dto.observacoes());
+        chamado.setPrioridade(dto.prioridade());
+        chamado.setCliente(cliente);
+
+        // Atribuição de técnico pode mudar status conforme regras
+        chamado.setTecnico(tecnico);
+        if (tecnico != null && chamado.getStatus() == Status.ABERTO) {
+            chamado.setStatus(Status.EM_ANDAMENTO);
+        }
+
+        chamado = chamadoRepository.save(chamado);
+        return toResponseDTO(chamado);
     }
 
 
@@ -105,30 +130,6 @@ public class ChamadoService {
             chamado.fechar();
         }
 
-        return toResponseDTO(chamadoRepository.save(chamado));
-    }
-
-    @Transactional
-    public ChamadoResponseDTO alterarPrioridade(UUID id, Prioridade novaPrioridade) {
-        Chamado chamado = buscarChamado(id);
-
-        if (chamado.getStatus() == Status.ENCERRADO) {
-            throw new DomainRuleException("Não é possível alterar prioridade de chamado encerrado");
-        }
-
-        chamado.setPrioridade(novaPrioridade);
-        return toResponseDTO(chamadoRepository.save(chamado));
-    }
-
-    @Transactional
-    public ChamadoResponseDTO atualizarObservacoes(UUID id, String novasObservacoes) {
-        Chamado chamado = buscarChamado(id);
-
-        if (chamado.getStatus() == Status.ENCERRADO) {
-            throw new DomainRuleException("Não é possível alterar observações de chamado encerrado");
-        }
-
-        chamado.setObservacoes(novasObservacoes);
         return toResponseDTO(chamadoRepository.save(chamado));
     }
 
@@ -167,14 +168,21 @@ public class ChamadoService {
                 .orElseThrow(() -> new EntityNotFoundException("Chamado", id));
     }
 
-    private void validarTransicaoStatus(Status atual, Status novo) {
-
-        if (atual == Status.ABERTO && novo == Status.ENCERRADO) {
-            throw new DomainRuleException("Chamado deve estar em andamento antes de ser encerrado");
+    private void validarNaoEncerrado(Chamado chamado) {
+        if (chamado.getStatus() == Status.ENCERRADO) {
+            throw new DomainRuleException("Não é possível alterar um chamado encerrado");
         }
+    }
 
+    private void validarTransicaoStatus(Status atual, Status novo) {
         if (atual == Status.ENCERRADO) {
             throw new DomainRuleException("Não é possível alterar um chamado encerrado");
+        }
+        if (atual == Status.ABERTO && novo == Status.ENCERRADO) {
+            throw new DomainRuleException("Chamado ABERTO não pode ser encerrado diretamente");
+        }
+        if (atual == Status.PAUSADO && novo != Status.EM_ANDAMENTO) {
+            throw new DomainRuleException("Chamado PAUSADO só pode voltar para EM_ANDAMENTO");
         }
     }
 
