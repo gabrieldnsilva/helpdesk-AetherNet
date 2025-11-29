@@ -1,0 +1,37 @@
+### Alterar status para EM_ANDAMENTO
+PATCH http://localhost:8080/api/chamados/11111111-1111-1111-1111-111111111111/status
+Content-Type: application/json
+
+{
+  "status": "EM_ANDAMENTO"
+}
+
+### Alterar status para PAUSADO
+PATCH http://localhost:8080/api/chamados/{{chamadoEmAndamentoId}}/status
+Content-Type: application/json
+
+{
+  "status": "PAUSADO"
+}
+
+### Validação - PAUSADO só pode ir para EM_ANDAMENTO (deve retornar 400)
+PATCH http://localhost:8080/api/chamados/{{chamadoPausadoId}}/status
+Content-Type: application/json
+
+{
+  "status": "ENCERRADO"
+}
+
+### Fechar chamado (PATCH /fechar)
+PATCH http://localhost:8080/api/chamados/{{chamadoEmAndamentoId}}/fechar
+
+### Validação - Não pode fechar chamado ABERTO diretamente (deve retornar 400)
+PATCH http://localhost:8080/api/chamados/11111111-1111-1111-1111-111111111111/fechar
+
+### Atribuir técnico a chamado ABERTO (auto-transição para EM_ANDAMENTO)
+PATCH http://localhost:8080/api/chamados/11111111-1111-1111-1111-111111111111/atribuir
+Content-Type: application/json
+
+{
+  "tecnicoId": "{{tecnicoId}}"
+}

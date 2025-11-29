@@ -1,0 +1,41 @@
+### Cenário 1: Criar chamado SEM técnico (status ABERTO)
+POST http://localhost:8080/api/chamados
+Content-Type: application/json
+
+{
+  "prioridade": "ALTA",
+  "titulo": "Problema de login no sistema",
+  "observacoes": "Cliente não consegue acessar o portal",
+  "nomeCliente": ""
+}
+
+### Cenário 2: Criar chamado COM técnico (status EM_ANDAMENTO automático)
+POST http://localhost:8080/api/chamados
+Content-Type: application/json
+
+{
+  "prioridade": "MEDIA",
+  "titulo": "Configuração de email corporativo",
+  "observacoes": "Técnico já designado para atendimento imediato",
+  "clienteId": "{{clienteId}}",
+  "tecnicoId": "{{tecnicoId}}"
+}
+
+### Cenário 3: Validação - Criar sem título (deve retornar 400)
+POST http://localhost:8080/api/chamados
+Content-Type: application/json
+
+{
+  "prioridade": "BAIXA",
+  "clienteId": "{{clienteId}}"
+}
+
+### Cenário 4: Validação - Cliente inexistente (deve retornar 404)
+POST http://localhost:8080/api/chamados
+Content-Type: application/json
+
+{
+  "prioridade": "ALTA",
+  "titulo": "Teste com cliente inválido",
+  "clienteId": "99999999-9999-9999-9999-999999999999"
+}
