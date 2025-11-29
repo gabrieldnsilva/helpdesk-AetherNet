@@ -1,13 +1,20 @@
 package com.aethernet.helpdesk.config;
 
+import com.aethernet.helpdesk.domain.Chamado;
 import com.aethernet.helpdesk.domain.Cliente;
 import com.aethernet.helpdesk.domain.Tecnico;
 import com.aethernet.helpdesk.domain.enums.Perfil;
+import com.aethernet.helpdesk.domain.enums.Prioridade;
+import com.aethernet.helpdesk.domain.enums.Status;
+import com.aethernet.helpdesk.repositories.ChamadoRepository;
 import com.aethernet.helpdesk.repositories.ClienteRepository;
 import com.aethernet.helpdesk.repositories.TecnicoRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Componente de configuração responsável por carregar dados iniciais no banco de dados
@@ -20,6 +27,7 @@ public class DataLoader implements CommandLineRunner {
 
     private final ClienteRepository clienteRepository;
     private final TecnicoRepository tecnicoRepository;
+    private final ChamadoRepository chamadoRepository;
 
     /**
      * Construtor para injeção de dependência dos repositórios necessários.
@@ -27,9 +35,10 @@ public class DataLoader implements CommandLineRunner {
      * @param clienteRepository Repositório para persistência de Clientes.
      * @param tecnicoRepository Repositório para persistência de Técnicos.
      */
-    public DataLoader(ClienteRepository clienteRepository, TecnicoRepository tecnicoRepository) {
+    public DataLoader(ClienteRepository clienteRepository, TecnicoRepository tecnicoRepository, ChamadoRepository chamadoRepository) {
         this.clienteRepository = clienteRepository;
         this.tecnicoRepository = tecnicoRepository;
+        this.chamadoRepository = chamadoRepository;
     }
 
     /**
@@ -41,7 +50,7 @@ public class DataLoader implements CommandLineRunner {
      */
     @Override
     @Transactional
-    public void run(String... args) {
+    public void run(String... args) throws  Exception {
         // Inicialização dos Clientes
         Cliente cliente1 = new Cliente();
         cliente1.setNome("João Silva");
@@ -73,5 +82,63 @@ public class DataLoader implements CommandLineRunner {
         tecnico2.setSenha("suporte456");
         tecnico2.getPerfis().add(Perfil.TECNICO);
         tecnicoRepository.save(tecnico2);
+
+
+        // NOVOS: Chamados de teste
+        criarChamadoAberto(cliente1); // UUID fixo para testes
+        criarChamadoEmAndamento(cliente2, tecnico1);
+        criarChamadoPausado(cliente1, tecnico2);
+        criarChamadoEncerrado(cliente2, tecnico1);
+
     }
+
+    private Chamado criarChamadoAberto(Cliente cliente) {
+        Chamado chamado = new Chamado();
+        chamado.setPrioridade(Prioridade.ALTA);
+        chamado.setStatus(Status.ABERTO);
+        chamado.setTitulo("Problema de conexão - TESTE ABERTO");
+        chamado.setObservacoes("Chamado sem técnico atribuído");
+        chamado.setCliente(cliente);
+        chamado.setDataAbertura(LocalDateTime.now());
+        return chamadoRepository.save(chamado);
+    }
+
+    private Chamado criarChamadoEmAndamento(Cliente cliente, Tecnico tecnico) {
+        Chamado chamado = new Chamado();
+        chamado.setPrioridade(Prioridade.MEDIA);
+        chamado.setStatus(Status.EM_ANDAMENTO);
+        chamado.setTitulo("Erro no sistema - TESTE ANDAMENTO");
+        chamado.setObservacoes("Chamado em andamento com técnico atribuído");
+        chamado.setCliente(cliente);
+        chamado.setTecnico(tecnico);
+        chamado.setDataAbertura(LocalDateTime.now().minusDays(1));
+        return chamadoRepository.save(chamado);
+    }
+
+    private Chamado criarChamadoPausado(Cliente cliente, Tecnico tecnico) {
+        Chamado chamado = new Chamado();
+        chamado.setPrioridade(Prioridade.BAIXA);
+        chamado.setStatus(Status.PAUSADO);
+        chamado.setTitulo("Solicitação de melhoria - TESTE PAUSADO");
+        chamado.setObservacoes("Chamado pausado aguardando informações do cliente");
+        chamado.setCliente(cliente);
+        chamado.setTecnico(tecnico);
+        chamado.setDataAbertura(LocalDateTime.now().minusDays(2));
+        return chamadoRepository.save(chamado);
+    }
+
+    private Chamado criarChamadoEncerrado(Cliente cliente, Tecnico tecnico) {
+        Chamado chamado = new Chamado();
+        chamado.setPrioridade(Prioridade.ALTA);
+        chamado.setStatus(Status.ENCERRADO);
+        chamado.setTitulo("Falha de hardware - TESTE ENCERRADO");
+        chamado.setObservacoes("Chamado encerrado após resolução do problema");
+        chamado.setCliente(cliente);
+        chamado.setTecnico(tecnico);
+        chamado.setDataAbertura(LocalDateTime.now().minusDays(5));
+        chamado.setDataFechamento(LocalDateTime.now().minusDays(1));
+        return chamadoRepository.save(chamado);
+    }
+
+
 }

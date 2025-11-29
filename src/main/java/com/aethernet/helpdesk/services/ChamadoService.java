@@ -3,7 +3,6 @@ package com.aethernet.helpdesk.services;
 import com.aethernet.helpdesk.domain.Chamado;
 import com.aethernet.helpdesk.domain.Cliente;
 import com.aethernet.helpdesk.domain.Tecnico;
-import com.aethernet.helpdesk.domain.dto.request.AtualizarChamadoRequestDTO;
 import com.aethernet.helpdesk.domain.dto.request.ChamadoRequestDTO;
 import com.aethernet.helpdesk.domain.dto.response.ChamadoResponseDTO;
 import com.aethernet.helpdesk.domain.enums.Prioridade;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class ChamadoService {

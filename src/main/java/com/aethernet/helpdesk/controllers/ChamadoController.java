@@ -1,14 +1,12 @@
 package com.aethernet.helpdesk.controllers;
 
 import com.aethernet.helpdesk.domain.dto.request.ChamadoRequestDTO;
-import com.aethernet.helpdesk.domain.dto.request.AtualizarChamadoRequestDTO;
 import com.aethernet.helpdesk.domain.dto.response.ChamadoResponseDTO;
 import com.aethernet.helpdesk.domain.enums.Prioridade;
 import com.aethernet.helpdesk.domain.enums.Status;
 import com.aethernet.helpdesk.exceptions.EntityNotFoundException;
 import com.aethernet.helpdesk.services.ChamadoService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
