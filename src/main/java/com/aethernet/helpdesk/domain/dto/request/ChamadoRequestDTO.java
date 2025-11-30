@@ -1,6 +1,7 @@
 package com.aethernet.helpdesk.domain.dto.request;
 
 import com.aethernet.helpdesk.domain.enums.Prioridade;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,8 +21,11 @@ import java.util.UUID;
  * @param clienteId O UUID do Cliente que está abrindo o chamado. É obrigatório.
  * @param tecnicoId O UUID do Técnico que será atribuído inicialmente ao chamado (opcional na abertura).
  */
+@Schema(description = "Dados para a criação ou atualização de chamado")
 public record ChamadoRequestDTO(
+
         @NotNull(message = "Prioridade é obrigatória")
+        @Schema(description = "Prioridade do chamado", example = "Alta")
         Prioridade prioridade,
 
         @NotBlank(message = "Título é obrigatório")
