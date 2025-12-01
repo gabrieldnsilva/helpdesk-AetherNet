@@ -38,9 +38,7 @@ class ClienteServiceTest {
                 "João Silva",
                 "123.456.789-00",
                 "joao@email.com",
-                "senha123",
-                null
-
+                "senha123"
         );
 
         Cliente clienteSalvo = new Cliente();
@@ -71,8 +69,7 @@ class ClienteServiceTest {
                 "João Silva",
                 "123.456.789-00",
                 "joao@email.com",
-                "senha123",
-                null
+                "senha123"
         );
 
         when(clienteRepository.existsByCpf(dto.cpf())).thenReturn(true);

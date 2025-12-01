@@ -21,11 +21,11 @@ import java.util.UUID;
  * @param clienteId O UUID do Cliente que está abrindo o chamado. É obrigatório.
  * @param tecnicoId O UUID do Técnico que será atribuído inicialmente ao chamado (opcional na abertura).
  */
-@Schema(description = "Dados para a criação ou atualização de chamado")
+@Schema(description = "Dados para a criação/atualização de chamado")
 public record ChamadoRequestDTO(
 
         @NotNull(message = "Prioridade é obrigatória")
-        @Schema(description = "Prioridade do chamado", example = "Alta")
+        @Schema(description = "Prioridade do chamado", example = "ALTA", allowableValues = {"BAIXA","MEDIA", "ALTA"})
         Prioridade prioridade,
 
         @NotBlank(message = "Título é obrigatório")
@@ -41,6 +41,6 @@ public record ChamadoRequestDTO(
         @Schema(description = "ID do cliente que abriu o chamado", example = "d290f1ee-6c54-4b01-90e6-d701748f0851")
         UUID clienteId,
 
-        @Schema(description = "ID do técnico atribuído ao chamado", example = "f47ac10b-58cc-4372-a567-0e02b2c3d479")
+        @Schema(description = "ID do técnico atribuído ao chamado", example = "f47ac10b-58cc-4372-a567-0e02b2c3d479", nullable = true)
         UUID tecnicoId
 ) {}

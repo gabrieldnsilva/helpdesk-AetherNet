@@ -72,7 +72,6 @@ public class DataLoader implements CommandLineRunner {
         tecnico1.setEmail("carlos@aethernet.com");
         tecnico1.setCpf("11122233344");
         tecnico1.setSenha("tecnico123");
-        tecnico1.getPerfis().add(Perfil.TECNICO);
         tecnicoRepository.save(tecnico1);
 
         Tecnico tecnico2 = new Tecnico();
@@ -80,7 +79,6 @@ public class DataLoader implements CommandLineRunner {
         tecnico2.setEmail("ana@aethernet.com");
         tecnico2.setCpf("55566677788");
         tecnico2.setSenha("suporte456");
-        tecnico2.getPerfis().add(Perfil.TECNICO);
         tecnicoRepository.save(tecnico2);
 
 

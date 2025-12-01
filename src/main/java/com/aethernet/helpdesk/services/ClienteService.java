@@ -52,24 +52,17 @@ public class ClienteService {
 
         // Validar Unicidade de CPF e Email
         if (clienteRepository.existsByCpf(dto.cpf())) {
-            throw new DuplicateEntityException("CPF já cadastrado");
+            throw new DuplicateEntityException("CPF já cadastrado" + dto.cpf());
         }
         if (clienteRepository.existsByEmail(dto.email())) {
-            throw new DuplicateEntityException("E-mail já cadastrado");
+            throw new DuplicateEntityException("E-mail já cadastrado" + dto.email());
         }
 
         Cliente cliente = new Cliente();
-        cliente.setId(UUID.randomUUID());
         cliente.setNome(dto.nome());
         cliente.setCpf(dto.cpf());
         cliente.setEmail(dto.email());
         cliente.setSenha(dto.senha()); // TODO: Criptografar senha
-        cliente.setDataCriacao(LocalDateTime.now());
-
-        Set<Perfil> perfis = dto.perfis() != null && !dto.perfis().isEmpty()
-                ? dto.perfis()
-                : Set.of(Perfil.CLIENTE);
-        perfis.forEach(cliente::addPerfil);
 
         cliente = clienteRepository.save(cliente);
         return toResponseDTO(cliente);
@@ -132,6 +125,10 @@ public class ClienteService {
 
         if (dto.senha() != null && !dto.senha().isBlank()) {
             cliente.setSenha(dto.senha()); // TODO: criptografar
+        }
+
+        if (!cliente.getPerfis().contains(Perfil.CLIENTE)) {
+            cliente.addPerfil(Perfil.CLIENTE);
         }
 
         cliente = clienteRepository.save(cliente);

@@ -72,7 +72,8 @@ public abstract class Pessoa {
      * Garante que toda Pessoa criada, por padrão, tenha o perfil de {@code CLIENTE}.
      */
     protected Pessoa() {
-        addPerfil(Perfil.CLIENTE);
+        this.perfis = new HashSet<>();
+        this.dataCriacao = LocalDateTime.now();
     }
 
     /**
@@ -81,7 +82,7 @@ public abstract class Pessoa {
      * @param perfil O {@code Perfil} a ser adicionado.
      */
     public void addPerfil(Perfil perfil) {
-        perfis.add(perfil);
+        this.perfis.add(perfil);
     }
 
     // --- Getters e Setters ---
