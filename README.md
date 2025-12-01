@@ -55,7 +55,7 @@ Para facilitar a exploração de todos os endpoints da API (incluindo `Chamados`
 Após executar a aplicação, você pode acessar a documentação interativa pelo seu navegador:
 
 **URL do Swagger UI:**
-`http://localhost:8080/swagger-ui.html`
+`http://localhost:8080/swagger-ui/index.html`
 
 Você encontrará:
 * A lista completa de rotas.
@@ -167,6 +167,7 @@ A arquitetura do projeto segue o padrão em camadas, focando na separação de r
 * __repository:__ Interfaces que estendem ```JpaRepository```, responsáveis pela comunicação direta com o banco de dados via Spring Data JPA.
 
 * __domain:__ Contém as entidades de persistência ```(Chamado.java)```, DTOs e Enums ```(Status, Prioridade)```.
+
 
 
 
