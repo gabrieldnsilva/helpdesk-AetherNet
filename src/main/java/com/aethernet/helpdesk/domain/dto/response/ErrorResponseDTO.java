@@ -1,5 +1,7 @@
 package com.aethernet.helpdesk.domain.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDateTime;
 
 /**
@@ -15,10 +17,20 @@ import java.time.LocalDateTime;
  * @param message A mensagem detalhada do erro, explicando o motivo da falha.
  * @param path O caminho (URI) da requisição que causou o erro.
  */
+@Schema(description = "Estrutura padrão de erro da API")
 public record ErrorResponseDTO(
+        @Schema(description = "Timestamp do erro", example = "2024-06-15T14:30:00")
         LocalDateTime timestamp,
+
+        @Schema(description = "Código de status HTTP", example = "400")
         Integer status,
+
+        @Schema(description = "Tipo de erro", example = "Validation Error")
         String error,
+
+        @Schema(description = "Mensagem detalhada do erro", example = "Título é obrigatório.")
         String message,
+
+        @Schema(description = "Caminho da requisição que gerou o erro", example = "/api/chamados")
         String path
 ) {}
