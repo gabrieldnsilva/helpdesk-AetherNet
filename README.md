@@ -46,16 +46,35 @@ Durante o desenvolvimento, o banco de dados H2 fica acessível para inspeção d
    * URL: ```http://localhost:8080/h2-console```
    * JDBC URL: ```jdbc:h2:mem:helpdeskdb```
 
+---
+
+## 📖 Documentação da API (Swagger UI)
+
+Para facilitar a exploração de todos os endpoints da API (incluindo `Chamados`, `Técnicos` e `Clientes`), o projeto utiliza o **Swagger UI**.
+
+Após executar a aplicação, você pode acessar a documentação interativa pelo seu navegador:
+
+**URL do Swagger UI:**
+`http://localhost:8080/swagger-ui.html`
+
+Você encontrará:
+* A lista completa de rotas.
+* Detalhes de DTOs (Request e Response).
+* A capacidade de testar os endpoints diretamente.
+
+---
+
 ## 🌐 Endpoints da API REST
-| Método | Rota | Descrição | DTO |
-|-------|------|-----------|------------|
-| POST | /api/chamados | Criar chamado | ChamadoRequestDTO |
-| GET | /api/chamados | Listar chamado | Nenhum |
-| GET | /api/chamados/{id} | Lê um chamado pelo UUID | Nenhum |
-| GET | /api/chamados/status/{status} | Consulta chamados por Status | Nenhum |
-| PUT | /api/chamados/{chamadoId}/tecnico/{tecnicoId} | Atribui um técnico ao chamado | Nenhum |
-| PUT | /api/chamados/{id}/status | Altera o Status do chamado | Status |
-| PUT | /api/chamados/{id}/observacoes | Atualiza as observações do chamado | String |
+Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/api/chamados/{id}` | Buscar chamado por ID |
+| `GET` | `/api/chamados` | Listar chamados com filtros opcionais |
+| `POST` | `/api/chamados` | Abrir novo chamado |
+| `PUT` | `/api/chamados/{id}` | Atualizar chamado completo |
+| `PATCH` | `/api/chamados/{id}/status` | Alterar status do chamado |
+| `PATCH` | `/api/chamados/{id}/fechar` | Fechar chamado |
+| `PATCH` | `/api/chamados/{id}/atribuir` | Atribuir técnico ao chamado |
+
 
 
 ## 🧪 Testando os Endpoints com Postman
@@ -87,10 +106,10 @@ Antes de criar um chamado, certifique-se de que a aplicação carregou os dados 
 __Dica__: Você pode obter um ```UUID``` de cliente ou técnico do H2 Console ```(http://localhost:8080/h2-console)``` inspecionando as tabelas ```CLIENTE``` e ```TECNICO```.
 
 
-### 2. Atribuir Técnico (PUT /api/chamados/{chamadoId}/tecnico/{tecnicoId})
+### 2. Atribuir Técnico (PATCH /api/chamados/{chamadoId}/tecnico/{tecnicoId})
 Este endpoint demonstra uma regra de negócio: a atribuição de um técnico.
 
-* Método: PUT
+* Método: PATCH
 
 * URL:  ```http://localhost:8080/api/chamados/{UUID_DO_CHAMADO}/{UUID_DO_TECNICO} ```
 
@@ -98,10 +117,10 @@ Este endpoint demonstra uma regra de negócio: a atribuição de um técnico.
 
 * __Body: Nenhum__
 
-### 3. Alterar Status (PUT /api/chamados/{id}/status)
+### 3. Alterar Status (PATCH /api/chamados/{id}/status)
 Altera o status do chamado. Isso ativa as regras de negócio de transição e fechamento (se o status for ENCERRADO).
 
-* Método: PUT
+* Método: PATCH
 
 * URL: ```http://localhost:8080/api/chamados/{UUID_DO_CHAMADO}/status```
 
@@ -148,5 +167,6 @@ A arquitetura do projeto segue o padrão em camadas, focando na separação de r
 * __repository:__ Interfaces que estendem ```JpaRepository```, responsáveis pela comunicação direta com o banco de dados via Spring Data JPA.
 
 * __domain:__ Contém as entidades de persistência ```(Chamado.java)```, DTOs e Enums ```(Status, Prioridade)```.
+
 
 
