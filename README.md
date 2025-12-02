@@ -11,6 +11,37 @@ O objetivo principal do Helpdesk AetherNet é gerenciar o ciclo de vida de um ch
 
 * __Arquitetura:__ Uso da estrutura em camadas (Controller, Service, Repository).
 
+## 🛠️ Tecnologias Utilizadas
+
+O projeto é construído sobre o ecossistema Spring Boot, garantindo uma aplicação robusta e escalável.
+
+* **Linguagem:** Java 17+
+* **Framework:** Spring Boot 3+
+* **Persistência:** Spring Data JPA e Hibernate
+* **Banco de Dados (Dev):** H2 Database (em memória, padrão para desenvolvimento)
+* **Documentação da API:** Springdoc OpenAPI / Swagger UI
+* **Build Tool:** Maven
+
+## 🧱 Arquitetura e Conceitos
+
+A arquitetura do projeto segue o padrão em **camadas** e aplica rigorosamente os princípios de POO:
+
+### 1. Separação de Responsabilidades
+
+| Camada | Responsabilidade | Tecnologias Chave |
+| :--- | :--- | :--- |
+| **`Controller`** | Mapear endpoints, receber requisições HTTP e retornar respostas. | `@RestController`, `@RequestMapping` |
+| **`Service`** | Contém a lógica de negócio (validações, regras de status, atribuição de técnico). | `@Service`, Transações (`@Transactional`) |
+| **`Repository`** | Comunicação direta com o banco de dados (CRUD e consultas personalizadas). | `JpaRepository` (Spring Data JPA) |
+| **`Domain`** | Entidades de persistência (`@Entity`), DTOs (Data Transfer Objects) e Enums. | `@Entity`, `@Data` |
+
+### 2. Persistência de Dados
+
+* **Mapeamento Objeto-Relacional:** Utiliza JPA para mapear entidades Java (e.g., `Chamado`, `Tecnico`, `Cliente`) para tabelas no banco de dados.
+* **Consultas Personalizadas:** Uso do poder do Spring Data JPA para realizar buscas eficientes, como filtrar chamados por `Status` ou `Prioridade`.
+
+---
+
 ## ⚙️ Estrutura do Projeto e Instalação
 
 ### Pré-requisitos
@@ -105,6 +136,7 @@ Antes de criar um chamado, certifique-se de que a aplicação carregou os dados 
 
 __Dica__: Você pode obter um ```UUID``` de cliente ou técnico do H2 Console ```(http://localhost:8080/h2-console)``` inspecionando as tabelas ```CLIENTE``` e ```TECNICO```.
 
+---
 
 ### 2. Atribuir Técnico (PATCH /api/chamados/{chamadoId}/tecnico/{tecnicoId})
 Este endpoint demonstra uma regra de negócio: a atribuição de um técnico.
@@ -116,6 +148,8 @@ Este endpoint demonstra uma regra de negócio: a atribuição de um técnico.
 * Exemplo:  ```http://localhost:8080/api/chamados/6b68b8e0-2f9b-4e8c-8f2e-0a0b1c2d3e4f/tecnico/a1b2c3d4-e5f6-7890-1234-567890abcdef ```
 
 * __Body: Nenhum__
+
+---
 
 ### 3. Alterar Status (PATCH /api/chamados/{id}/status)
 Altera o status do chamado. Isso ativa as regras de negócio de transição e fechamento (se o status for ENCERRADO).
@@ -134,6 +168,7 @@ Altera o status do chamado. Isso ativa as regras de negócio de transição e fe
 
 __Atenção:__ O corpo da requisição é apenas a string do ```Enum```, conforme definido no seu Controller.
 
+---
 
 ### 4. Criar um Novo Técnico (POST /api/tecnicos)
 Cria um registro de usuário que pode resolver chamados.
@@ -156,18 +191,13 @@ Cria um registro de usuário que pode resolver chamados.
 }
 ```
 
+---
 
-## 📦 Estrutura de Código
-A arquitetura do projeto segue o padrão em camadas, focando na separação de responsabilidades:
+## 👥 Colaboradores
 
-* __controller:__ Responsável por mapear os endpoints da API ```(@RestController)``` e processar requisições HTTP.
+O desenvolvimento e a manutenção inicial deste projeto, realizado como parte de um trabalho acadêmico da disciplina de Programação Orientada a Objetos (POO), contaram com a participação de:
 
-* __service:__ Contém a lógica de negócio (ex: validações, regras de atualização de status).
-
-* __repository:__ Interfaces que estendem ```JpaRepository```, responsáveis pela comunicação direta com o banco de dados via Spring Data JPA.
-
-* __domain:__ Contém as entidades de persistência ```(Chamado.java)```, DTOs e Enums ```(Status, Prioridade)```.
-
-
-
+* **Gabriel Danilo**
+* **Kaique Santos de Carvalho**
+* **Rogério de Lima Rodrigues**
 
