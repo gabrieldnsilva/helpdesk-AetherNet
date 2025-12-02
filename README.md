@@ -106,14 +106,7 @@ Método | Rota | Descrição |
 | `PATCH` | `/api/chamados/{id}/fechar` | Fechar chamado |
 | `PATCH` | `/api/chamados/{id}/atribuir` | Atribuir técnico ao chamado |
 
-
-
-## 🧪 Testando os Endpoints com Postman
-
-A seguir, apresentamos exemplos de como realizar as principais operações na coleção do Postman.
-
-
-### 1. Criar um Chamado (POST /api/chamados)
+### Exemplo: Criar um Chamado (POST /api/chamados)
 Antes de criar um chamado, certifique-se de que a aplicação carregou os dados iniciais (Clientes e Técnicos).
 
 * Método: POST
@@ -138,58 +131,23 @@ __Dica__: Você pode obter um ```UUID``` de cliente ou técnico do H2 Console ``
 
 ---
 
-### 2. Atribuir Técnico (PATCH /api/chamados/{chamadoId}/tecnico/{tecnicoId})
-Este endpoint demonstra uma regra de negócio: a atribuição de um técnico.
+## 🧪 Testes e Coleções (Opcional)
 
-* Método: PATCH
+Para testar e explorar a API de forma completa, há duas opções principais:
 
-* URL:  ```http://localhost:8080/api/chamados/{UUID_DO_CHAMADO}/{UUID_DO_TECNICO} ```
+### 1. Documentação Interativa (Recomendado)
 
-* Exemplo:  ```http://localhost:8080/api/chamados/6b68b8e0-2f9b-4e8c-8f2e-0a0b1c2d3e4f/tecnico/a1b2c3d4-e5f6-7890-1234-567890abcdef ```
+Utilize o **Swagger UI** para inspecionar e executar todos os endpoints diretamente no navegador, sem a necessidade de ferramentas externas:
 
-* __Body: Nenhum__
+* **URL:** `http://localhost:8080/swagger-ui.html`
 
----
+### 2. Coleções de Requisições
 
-### 3. Alterar Status (PATCH /api/chamados/{id}/status)
-Altera o status do chamado. Isso ativa as regras de negócio de transição e fechamento (se o status for ENCERRADO).
+Se preferir usar clients de API (como Postman ou Insomnia), você pode importar as coleções prontas disponíveis na pasta:
 
-* Método: PATCH
+* **Local:** `api-requests/`
 
-* URL: ```http://localhost:8080/api/chamados/{UUID_DO_CHAMADO}/status```
-
-* Header: ```Content-Type: application/json```
-
-* __Body (raw, JSON):__ (Para mudar para EM_ANDAMENTO)
-
-  ```JSON
-   "EM_ANDAMENTO"
-  ```
-
-__Atenção:__ O corpo da requisição é apenas a string do ```Enum```, conforme definido no seu Controller.
-
----
-
-### 4. Criar um Novo Técnico (POST /api/tecnicos)
-Cria um registro de usuário que pode resolver chamados.
-
-* Método: POST
-
-* URL: ```http://localhost:8080/api/tecnicos```
-
-* Header: ```Content-Type: application/json```
-
-* __Body (raw, JSON)__ - conforme TecnicoRequestDTO:
-
-```JSON
-{
-    "nome": "Novo Técnico API",
-    "cpf": "55544433322",
-    "email": "novo.tecnico@api.com",
-    "senha": "senhadotecnico",
-    "perfis": ["TECNICO"]
-}
-```
+Essa pasta contém coleções que já possuem os URLs e corpos de requisição predefinidos para facilitar o início dos testes.
 
 ---
 
@@ -200,4 +158,5 @@ O desenvolvimento e a manutenção inicial deste projeto, realizado como parte d
 * **Gabriel Danilo**
 * **Kaique Santos de Carvalho**
 * **Rogério de Lima Rodrigues**
+
 
